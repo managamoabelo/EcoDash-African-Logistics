@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  background: #9e9e9b;
+  font-family: Calibri, sans-serif;
+}
+canvas {
+  display: block;
+  margin: auto;
+  background: linear-gradient(#c2cdcf, #8484c6);
+}
