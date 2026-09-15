@@ -1,7 +1,7 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-canvas.width = 800;
-canvas.height = 600;
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
 let gameState = "start"; // start, playing, paused, gameover
 
