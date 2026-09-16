@@ -4,6 +4,9 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 let gameState = "start"; // start, playing, paused, gameover
+let windForce = 0;       // wind effect
+let raining = false;     // rain effect
+let loadShedding = false; // disables charging zones
 
 class Drone {
   constructor() {
@@ -17,10 +20,15 @@ class Drone {
   }
 
   update() {
+    // Apply wind drift
+    this.x += windForce;
+
+    // Movement
     this.x += Math.cos(this.angle) * this.speed;
     this.y += Math.sin(this.angle) * this.speed;
     this.distance += Math.abs(this.speed);
 
+    // Battery drain
     if (this.speed !== 0) {
       this.battery -= 0.05;
       this.score += 1;
@@ -39,6 +47,10 @@ class Drone {
     ctx.fillText(`Distance: ${this.distance.toFixed(0)}m`, 10, 40);
     ctx.fillText(`Score: ${this.score}`, 10, 60);
     ctx.fillText(`High Score: ${localStorage.getItem("highScore") || 0}`, 10, 80);
+
+    if (raining) ctx.fillText("Rain: Visibility Reduced", 10, 100);
+    if (windForce !== 0) ctx.fillText("Wind Drift Active", 10, 120);
+    if (loadShedding) ctx.fillText("Load-Shedding: Charging Disabled", 10, 140);
   }
 }
 
@@ -107,6 +119,14 @@ function gameLoop() {
         }
       }
     });
+
+    // Rain effect: reduce visibility
+    if (raining) {
+      ctx.fillStyle = "rgba(0,0,255,0.2)";
+      for (let i = 0; i < 50; i++) {
+        ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 10);
+      }
+    }
   } else if (gameState === "paused") {
     drawPauseScreen();
   } else if (gameState === "gameover") {
@@ -139,6 +159,11 @@ document.addEventListener("keydown", e => {
     if (e.key === "ArrowLeft") drone.angle -= 0.1;
     if (e.key === "ArrowRight") drone.angle += 0.1;
     if (e.key.toLowerCase() === "p") gameState = "paused";
+
+    // Toggle environmental effects
+    if (e.key.toLowerCase() === "r") raining = !raining;
+    if (e.key.toLowerCase() === "w") windForce = windForce === 0 ? 0.5 : 0;
+    if (e.key.toLowerCase() === "l") loadShedding = !loadShedding;
   } else if (gameState === "paused" && e.key.toLowerCase() === "p") {
     gameState = "playing";
   } else if (gameState === "gameover" && e.key === "Enter") {
