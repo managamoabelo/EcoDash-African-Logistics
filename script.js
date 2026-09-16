@@ -54,6 +54,30 @@ class Drone {
   }
 }
 
+class ChargingZone {
+    constructor(x, y, radius) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
+
+    draw() {
+        ctx.fillStyle = "green";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    contains(drone) {
+        const dx = drone.x - this.x;
+        const dy = drone.y - this.y;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        return distance < this.radius;
+    }
+}
+
 class Obstacle {
   constructor(x, y, radius) {
     this.x = x;
@@ -78,6 +102,7 @@ class Obstacle {
 
 const drone = new Drone();
 const obstacles = [new Obstacle(400, 300, 30), new Obstacle(600, 200, 40)];
+const chargingZone = new ChargingZone(750, 400, 60);
 
 function drawStartScreen() {
   ctx.fillStyle = "black";
@@ -102,6 +127,16 @@ function drawGameOverScreen() {
 
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  chargingZone.draw();
+
+if (chargingZone.contains(drone) && !loadShedding) {
+    drone.battery += 0.2;
+
+    if (drone.battery > 100) {
+        drone.battery = 100;
+    }
+}
 
   if (gameState === "start") {
     drawStartScreen();
