@@ -30,10 +30,18 @@ class Drone {
 
     // Battery drain
     if (this.speed !== 0) {
-      this.battery -= 0.05;
-      this.score += 1;
+  this.battery -= 0.05;
+  this.score += 1;
+  }
+  if (this.battery <= 0) {
+    this.battery = 0;
+    gameState = "gameover";   // End the game when battery runs out
+    const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
+    if (this.score > highScore) {
+      localStorage.setItem("highScore", this.score);
     }
-    if (this.battery < 0) this.battery = 0;
+}
+
   }
 
   draw() {
