@@ -104,6 +104,36 @@ const drone = new Drone();
 const obstacles = [new Obstacle(400, 300, 30), new Obstacle(600, 200, 40)];
 const chargingZone = new ChargingZone(750, 400, 60);
 
+function drawBackground() {
+  // Cycle between day and night
+  cycleCounter++;
+  if (cycleCounter % 600 === 0) { // every ~10 seconds
+    timeOfDay = timeOfDay === 0 ? 1 : 0;
+  }
+
+  if (timeOfDay === 0) {
+    // Daytime sky
+    ctx.fillStyle = "#84bfd6";
+  } else {
+    // Nighttime sky
+    ctx.fillStyle = "#315d89";
+  }
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Add sun/moon
+  if (timeOfDay === 0) {
+    ctx.fillStyle = "yellow";
+    ctx.beginPath();
+    ctx.arc(700, 100, 40, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(700, 100, 30, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 function drawStartScreen() {
   ctx.fillStyle = "black";
   ctx.font = "30px Calibri";
