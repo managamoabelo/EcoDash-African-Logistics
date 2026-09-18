@@ -257,8 +257,8 @@ document.addEventListener("keydown", e => {
   if (gameState === "start" && e.key === "Enter") {
     gameState = "playing";
   } else if (gameState === "playing") {
-    if (e.key === "ArrowUp") drone.speed = 2;
-    if (e.key === "ArrowDown") drone.speed = -2;
+    if (e.key === "ArrowUp") drone.acceleration = 0.1;
+    if (e.key === "ArrowDown") drone.acceleration = -0.1;
     if (e.key === "ArrowLeft") drone.angle -= 0.1;
     if (e.key === "ArrowRight") drone.angle += 0.1;
     if (e.key.toLowerCase() === "p") gameState = "paused";
