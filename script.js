@@ -7,6 +7,16 @@ let gameState = "start"; // start, playing, paused, gameover
 let windForce = 0;       // wind effect
 let raining = false;     // rain effect
 let loadShedding = false; // disables charging zones
+let timeOfDay = 0;
+let cycleCounter = 0;
+
+// Load sounds
+const bgMusic = new Audio("assets/sounds/background.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.5;
+
+const collisionSound = new Audio("assets/sounds/collision.wav");
+const moveSound = new Audio("assets/sounds/move.wav");
 
 class Drone {
   constructor() {
@@ -38,11 +48,10 @@ class Drone {
       this.battery = 0;
       gameState = "gameover";   // End the game when battery runs out
       const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
-    if (this.score > highScore) {
-      localStorage.setItem("highScore", this.score);
+      if (this.score > highScore) {
+        localStorage.setItem("highScore", this.score);
+      }
     }
-  }
-
   }
 
   draw() {
