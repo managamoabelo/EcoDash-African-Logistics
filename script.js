@@ -27,16 +27,38 @@ class Drone {
     this.battery = 100;
     this.distance = 0;
     this.score = 0;
+    this.acceleration = 0;
+    this.maxSpeed = 10;
+    this.friction = 0.08;
   }
 
   update() {
     // Apply wind drift
     this.x += windForce;
 
+    // Apply acceleration
+    this.speed += this.acceleration;
+
+    // Apply friction (slows down when no input)
+    if (this.acceleration === 0) {
+      if (this.speed > 0) {
+        this.speed -= this.friction;
+        if (this.speed < 0) this.speed = 0;
+      } else if (this.speed < 0) {
+        this.speed += this.friction;
+        if (this.speed > 0) this.speed = 0;
+      }
+    }
+
+    // Clamp speed to max/min
+    if (this.speed > this.maxSpeed) this.speed = this.maxSpeed;
+    if (this.speed < -this.maxSpeed) this.speed = -this.maxSpeed;
+
     // Movement
     this.x += Math.cos(this.angle) * this.speed;
     this.y += Math.sin(this.angle) * this.speed;
     this.distance += Math.abs(this.speed);
+
 
     // Battery drain
     if (this.speed !== 0) {
@@ -50,8 +72,8 @@ class Drone {
       const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
       if (this.score > highScore) {
         localStorage.setItem("highScore", this.score);
+        }
       }
-    }
   }
 
   draw() {
@@ -74,25 +96,23 @@ class Drone {
 
 class ChargingZone {
     constructor(x, y, radius) {
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
+      this.x = x;
+      this.y = y;
+      this.radius = radius;
     }
 
     draw() {
-        ctx.fillStyle = "green";
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fill();
+      ctx.fillStyle = "green";
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fill();
     }
 
     contains(drone) {
-        const dx = drone.x - this.x;
-        const dy = drone.y - this.y;
-
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        return distance < this.radius;
+      const dx = drone.x - this.x;
+      const dy = drone.y - this.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      return distance < this.radius;
     }
 }
 
