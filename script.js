@@ -275,5 +275,5 @@ document.addEventListener("keydown", e => {
 });
 
 document.addEventListener("keyup", () => {
-  if (gameState === "playing") drone.speed = 0;
+  if (gameState === "playing") drone.acceleration = 0;
 });
