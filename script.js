@@ -74,6 +74,17 @@ class Drone {
         localStorage.setItem("highScore", this.score);
         }
       }
+
+      // Movement
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      this.distance += Math.abs(this.speed);
+
+      // 🚧 Border collision checks
+      if (this.x < 20) this.x = 20; // left border
+      if (this.x > canvas.width - 20) this.x = canvas.width - 20; // right border
+      if (this.y < 20) this.y = 20; // top border
+      if (this.y > canvas.height - 20) this.y = canvas.height - 20; // bottom border
   }
 
   draw() {
