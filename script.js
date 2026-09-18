@@ -165,19 +165,6 @@ const potholes = [
   new Pothole(500, 400, 30)
 ];
 
-// Draw potholes
-potholes.forEach(hole => {
-  hole.draw();
-  if (hole.collides(drone)) {
-    gameState = "gameover";
-    collisionSound.play(); // play collision sound
-    const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
-    if (drone.score > highScore) {
-      localStorage.setItem("highScore", drone.score);
-    }
-  }
-});
-
 const drone = new Drone();
 const obstacles = [
   new Obstacle(400, 300, 30),
@@ -258,6 +245,19 @@ function gameLoop() {
       obs.draw();
       if (obs.collides(drone)) {
         gameState = "gameover";
+        const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
+        if (drone.score > highScore) {
+          localStorage.setItem("highScore", drone.score);
+        }
+      }
+    });
+
+    // Draw potholes
+    potholes.forEach(hole => {
+      hole.draw();
+      if (hole.collides(drone)) {
+        gameState = "gameover";
+        collisionSound.play(); // play collision sound
         const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
         if (drone.score > highScore) {
           localStorage.setItem("highScore", drone.score);
