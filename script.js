@@ -138,8 +138,50 @@ class Obstacle {
   }
 }
 
+class Pothole {
+  constructor(x, y, radius) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius
+  }
+
+  draw() {
+    ctx.fillStyle = "darkgrey";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill()
+  }
+
+  collides(drone) {
+    const dx = drone.x - this.x;
+    const dy = drone.y - this.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    return distance < this,this.radius + 20;
+  }
+}
+
+const potholes = [
+  new Pothole(300, 250, 25),
+  new Pothole(500, 400, 30)
+];
+
+// Draw potholes
+potholes.forEach(hole => {
+  hole.draw();
+  if (hole.collides(drone)) {
+    gameState = "gameover";
+    collisionSound.play(); // play collision sound
+    const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
+    if (drone.score > highScore) {
+      localStorage.setItem("highScore", drone.score);
+    }
+  }
+});
+
 const drone = new Drone();
-const obstacles = [new Obstacle(400, 300, 30), new Obstacle(600, 200, 40)];
+const obstacles = [
+  new Obstacle(400, 300, 30),
+  new Obstacle(600, 200, 40)];
 const chargingZone = new ChargingZone(750, 400, 60);
 
 function drawBackground() {
@@ -198,13 +240,13 @@ function gameLoop() {
 
   chargingZone.draw();
 
-if (chargingZone.contains(drone) && !loadShedding) {
-    drone.battery += 0.2;
+  if (chargingZone.contains(drone) && !loadShedding) {
+      drone.battery += 0.2;
 
-    if (drone.battery > 100) {
-        drone.battery = 100;
-    }
-}
+      if (drone.battery > 100) {
+          drone.battery = 100;
+      }
+  }
 
   if (gameState === "start") {
     drawStartScreen();
