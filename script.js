@@ -105,6 +105,12 @@ class Drone {
   }
 }
 
+const drone = new Drone();
+const obstacles = [
+  new Obstacle(400, 300, 30),
+  new Obstacle(600, 200, 40)];
+const chargingZone = new ChargingZone(750, 400, 60);
+
 class ChargingZone {
     constructor(x, y, radius) {
       this.x = x;
@@ -176,11 +182,46 @@ const potholes = [
   new Pothole(500, 400, 30)
 ];
 
-const drone = new Drone();
-const obstacles = [
-  new Obstacle(400, 300, 30),
-  new Obstacle(600, 200, 40)];
-const chargingZone = new ChargingZone(750, 400, 60);
+class TrafficCar {
+  constructor(x, y, width, height, speed) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.speed = speed;
+  }
+
+  update() {
+    this.x += this.speed;
+
+    // Reset position when off-screen
+    if (this.speed > 0 && this.x > canvas.width + this.width) {
+      this.x = -this.width;
+    } else if (this.speed < 0 && this.x < -this.width) {
+      this.x = canvas.width + this.width;
+    }
+  }
+
+  draw() {
+    ctx.fillStyle = "red"; // car color
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+  }
+
+  collides(drone) {
+    return (
+      drone.x < this.x + this.width &&
+      drone.x + 20 > this.x && // drone radius ~20
+      drone.y < this.y + this.height &&
+      drone.y + 20 > this.y
+    );
+  }
+}
+
+const trafficCars = [
+  new TrafficCar(0, 200, 60, 30, 3),   // car moving right
+  new TrafficCar(800, 350, 70, 35, -4) // car moving left
+];
+
 
 function drawBackground() {
   // Cycle between day and night
@@ -268,6 +309,20 @@ function gameLoop() {
     potholes.forEach(hole => {
       hole.draw();
       if (hole.collides(drone)) {
+        gameState = "gameover";
+        collisionSound.play(); // play collision sound
+        const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
+        if (drone.score > highScore) {
+          localStorage.setItem("highScore", drone.score);
+        }
+      }
+    });
+
+    // Draw traffic cars
+    trafficCars.forEach(car => {
+      car.update();
+      car.draw();
+      if (car.collides(drone)) {
         gameState = "gameover";
         collisionSound.play(); // play collision sound
         const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
