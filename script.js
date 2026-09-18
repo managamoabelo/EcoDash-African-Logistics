@@ -75,12 +75,7 @@ class Drone {
         }
       }
 
-      // Movement
-      this.x += Math.cos(this.angle) * this.speed;
-      this.y += Math.sin(this.angle) * this.speed;
-      this.distance += Math.abs(this.speed);
-
-      // 🚧 Border collision checks
+      // Border collision checks
       if (this.x < 20) this.x = 20; // left border
       if (this.x > canvas.width - 20) this.x = canvas.width - 20; // right border
       if (this.y < 20) this.y = 20; // top border
@@ -98,18 +93,16 @@ class Drone {
     ctx.fillText(`Distance: ${this.distance.toFixed(0)}m`, 10, 40);
     ctx.fillText(`Score: ${this.score}`, 10, 60);
     ctx.fillText(`High Score: ${localStorage.getItem("highScore") || 0}`, 10, 80);
+    ctx.fillText(`Efficiency: ${efficiency} m/%`, 10, 180);
 
     if (raining) ctx.fillText("Rain: Visibility Reduced", 10, 100);
     if (windForce !== 0) ctx.fillText("Wind Drift Active", 10, 120);
     if (loadShedding) ctx.fillText("Load-Shedding: Charging Disabled", 10, 140);
+
+    const usedBattery = 100 - this.battery;
+    const efficiency = usedBattery > 0 ? (this.distance / usedBattery).toFixed(2) : 0;
   }
 }
-
-const drone = new Drone();
-const obstacles = [
-  new Obstacle(400, 300, 30),
-  new Obstacle(600, 200, 40)];
-const chargingZone = new ChargingZone(750, 400, 60);
 
 class ChargingZone {
     constructor(x, y, radius) {
@@ -217,9 +210,17 @@ class TrafficCar {
   }
 }
 
+const drone = new Drone();
+
+const obstacles = [
+  new Obstacle(400, 300, 30),
+  new Obstacle(600, 200, 40)];
+
+const chargingZone = new ChargingZone(750, 400, 60);
+
 const trafficCars = [
-  new TrafficCar(0, 200, 60, 30, 3),   // car moving right
-  new TrafficCar(800, 350, 70, 35, -4) // car moving left
+  new TrafficCar(0, 200, 60, 30, 3),
+  new TrafficCar(800, 350, 70, 35, -4)
 ];
 
 
