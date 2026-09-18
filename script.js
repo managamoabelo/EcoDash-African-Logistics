@@ -156,7 +156,7 @@ class Pothole {
     const dx = drone.x - this.x;
     const dy = drone.y - this.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    return distance < this,this.radius + 20;
+    return distance < this.radius + 20;
   }
 }
 
