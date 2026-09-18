@@ -189,7 +189,7 @@ function drawPauseScreen() {
 function drawGameOverScreen() {
   ctx.fillStyle = "red";
   ctx.font = "30px Calibri";
-  ctx.fillText("Game Over!", 330, 250);
+  ctx.fillText("GAME OVER!", 330, 250);
   ctx.fillText("Press ENTER to Restart", 270, 300);
 }
 
@@ -269,6 +269,8 @@ document.addEventListener("keydown", e => {
     if (e.key.toLowerCase() === "l") loadShedding = !loadShedding;
   } else if (gameState === "paused" && e.key.toLowerCase() === "p") {
     gameState = "playing";
+  } else if (gameState === "paused" && e.key === "Enter") {
+    restartGame();
   } else if (gameState === "gameover" && e.key === "Enter") {
     restartGame();
   }
