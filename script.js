@@ -222,8 +222,9 @@ function drawStartScreen() {
 function drawPauseScreen() {
   ctx.fillStyle = "black";
   ctx.font = "30px Calibri";
-  ctx.fillText("Game Paused", 320, 250);
+  ctx.fillText("Game Paused", 300, 250);
   ctx.fillText("Press P to Resume", 300, 300);
+  ctx.fillText("Press Enter to Restart", 300, 350);
 }
 
 function drawGameOverScreen() {
