@@ -244,6 +244,33 @@ class House {
   }
 }
 
+class ResourcePoint {
+  constructor(x, y, radius) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.collected = false; // track if resources have been picked up
+  }
+
+  draw() {
+    ctx.fillStyle = this.collected ? "grey" : "purple"; // grey if already collected
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "white";
+    ctx.font = "14px Calibri";
+    ctx.fillText("Resources", this.x - this.radius, this.y - this.radius - 5);
+  }
+
+  contains(drone) {
+    const dx = drone.x - this.x;
+    const dy = drone.y - this.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    return distance < this.radius + 20; // drone radius ~20
+  }
+}
+
 // -------------------- OBJECTS --------------------
 
 const drone = new Drone();
@@ -279,6 +306,8 @@ const houses = [
   new House(650, 650, 100, 70, "orange"),
   new House(800, 650, 100, 70, "grey")
 ];
+
+const resourcePoint = new ResourcePoint(400, 250, 40);
 
 // -------------------- DRAWING --------------------
 
@@ -343,6 +372,13 @@ function gameLoop() {
     houses.forEach(house => {
       house.draw();
     });
+
+    // Resource Point
+    resourcePoint.draw();
+    if (resourcePoint.contains(drone) && !resourcePoint.collected) {
+      resourcePoint.collected = true;
+      drone.score += 50; // bonus for collecting resources
+    }
 
     // Potholes
     potholes.forEach(hole => {
