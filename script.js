@@ -245,8 +245,8 @@ function drawPauseScreen() {
   ctx.fillStyle = "black";
   ctx.font = "30px Calibri";
   ctx.fillText("Game Paused", 300, 250);
-  ctx.fillText("Press P to Resume", 300, 300);
-  ctx.fillText("Press Enter to Restart", 300, 350);
+  ctx.fillText("Press 'P' to Resume", 300, 300);
+  ctx.fillText("Press 'R' to Restart", 300, 350);
 }
 
 function drawGameOverScreen() {
@@ -365,7 +365,7 @@ document.addEventListener("keydown", e => {
     if (e.key.toLowerCase() === "l") loadShedding = !loadShedding;
   } else if (gameState === "paused" && e.key.toLowerCase() === "p") {
     gameState = "playing";
-  } else if (gameState === "paused" && e.key === "Enter") {
+  } else if (gameState === "paused" && e.key === "r") {
     restartGame();
   } else if (gameState === "gameover" && e.key === "Enter") {
     restartGame();
