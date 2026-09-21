@@ -92,9 +92,9 @@ class Drone {
 
     // HUD text
     ctx.fillStyle = "black";
-    ctx.fillText(`Distance: ${this.distance.toFixed(0)}m`, 10, 40);
-    ctx.fillText(`Score: ${this.score}`, 10, 60);
-    ctx.fillText(`High Score: ${localStorage.getItem("highScore") || 0}`, 10, 80);
+    ctx.fillText(`Distance: ${this.distance.toFixed(0)}m`, 10, 50);
+    ctx.fillText(`Score: ${this.score}`, 10, 75);
+    ctx.fillText(`High Score: ${localStorage.getItem("highScore") || 0}`, 10, 100);
 
     if (raining) ctx.fillText("Rain: Visibility Reduced", 10, 100);
     if (windForce !== 0) ctx.fillText("Wind Drift Active", 10, 120);
@@ -103,17 +103,11 @@ class Drone {
     // Efficiency score
     const usedBattery = 100 - this.battery;
     const efficiency = usedBattery > 0 ? (this.distance / usedBattery).toFixed(2) : 0;
-    ctx.fillText(`Efficiency: ${efficiency} m/%`, 10, 180);
+    ctx.fillText(`Efficiency: ${efficiency} m/%`, 10, 125);
 
     // Battery bar HUD
-    ctx.fillStyle = "grey";
-    ctx.fillRect(80, 10, 200, 20);
-    ctx.fillStyle = this.battery > 50 ? "green" : this.battery > 20 ? "orange" : "red";
-    ctx.fillRect(80, 10, (this.battery / 100) * 200, 20);
-    ctx.strokeStyle = "black";
-    ctx.strokeRect(80, 10, 200, 20);
-    ctx.fillStyle = "black";
-    ctx.fillText(`${this.battery.toFixed(0)}%`, 290, 25);
+    
+    ctx.fillText(`Battery:  ${this.battery.toFixed(0)}%`, 10, 25);
   }
 }
 
