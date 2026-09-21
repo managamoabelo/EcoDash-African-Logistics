@@ -219,6 +219,31 @@ class Bird {
   }
 }
 
+class House {
+  constructor(x, y, width, height, color) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.color = color;
+  }
+
+  draw() {
+    // Base rectangle
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+
+    // Roof (triangle)
+    ctx.fillStyle = "maroon";
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y);
+    ctx.lineTo(this.x + this.width / 2, this.y - this.height / 2);
+    ctx.lineTo(this.x + this.width, this.y);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
 // -------------------- OBJECTS --------------------
 
 const drone = new Drone();
@@ -239,6 +264,21 @@ const birds = [
   new Bird(800, 250, 50, 25, -3)  // bird flying left
 ];
 
+const houses = [
+  new House(50, 170, 100, 70, "lightblue"),
+  new House(200, 170, 100, 70, "yellow"),
+  new House(350, 170, 100, 70, "pink"),
+  new House(500, 170, 100, 70, "lightgreen"),
+  new House(650, 170, 100, 70, "orange"),
+  new House(800, 170, 100, 70, "lightgrey"),
+
+  new House(50, 650, 100, 70, "blue"),
+  new House(200, 650, 100, 70, "purple"),
+  new House(350, 650, 100, 70, "brown"),
+  new House(500, 650, 100, 70, "green"),
+  new House(650, 650, 100, 70, "orange"),
+  new House(800, 650, 100, 70, "grey")
+];
 
 // -------------------- DRAWING --------------------
 
@@ -298,6 +338,11 @@ function gameLoop() {
   } else if (gameState === "playing") {
     drone.update();
     drone.draw();
+
+    // Houses (background environment)
+    houses.forEach(house => {
+      house.draw();
+    });
 
     // Potholes
     potholes.forEach(hole => {
