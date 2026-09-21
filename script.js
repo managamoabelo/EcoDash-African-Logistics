@@ -206,6 +206,13 @@ class House {
     this.width = width;
     this.height = height;
     this.color = color;
+    this.requiredResources = [];
+    this.deliveredResources = [];
+  }
+
+  assignResources(resources) {
+    const shuffled = resources.sort(() => 0.5 - Math.random());
+    this.requiredResources = shuffled.slice(0, Math.floor(Math.random() * 3) + 1)
   }
 
   draw() {
@@ -221,6 +228,27 @@ class House {
     ctx.lineTo(this.x + this.width, this.y);
     ctx.closePath();
     ctx.fill();
+
+    ctx.fillstyle = "black";
+    ctx.font = "15px Calibri"
+    ctx.fillText(`Needs: ${this.assignResources.join(", ")}`, this.x, this.y + this.height + 15); 
+  }
+
+  contains(drone) {
+    return (
+      drone.x > this.x &&
+      drone.x < this.x + this.width &&
+      drone.y > this.y &&
+      drone.y < this.y + this.height
+    );
+  }
+
+  deliver(drone) {
+    if (this.contains(drone)) {
+      this.deliveredResources = [...this.requiredResources];
+      this.requiredResources = [];
+      drone.score += 100; // bonus for completing delivery
+    }
   }
 }
 
@@ -266,6 +294,8 @@ const birds = [
   new Bird(0, 150, 40, 20, 2),    // bird flying right
   new Bird(800, 250, 50, 25, -3)  // bird flying left
 ];
+
+const resourceTypes = ["Medical Supplies", "Food", "Educational Resources", "Emergency Equipment"];
 
 const houses = [
   new House(50, 170, 100, 70, "lightblue"),
@@ -346,15 +376,23 @@ function gameLoop() {
 
     // Houses (background environment)
     houses.forEach(house => {
-      house.draw();
+      house.assignResources([...resourceTypes]);
     });
 
     // Resource Point
     resourcePoint.draw();
     if (resourcePoint.contains(drone) && !resourcePoint.collected) {
       resourcePoint.collected = true;
-      drone.score += 50; // bonus for collecting resources
+      drone.score += 50; // bonus for pickup
     }
+
+    // Houses
+    houses.forEach(house => {
+      house.draw();
+      if (resourcePoint.collected && house.contains(drone) && house.requiredResources.length > 0) {
+        house.deliver(drone);
+      }
+    });
 
     // Traffic cars
     trafficCars.forEach(car => {
