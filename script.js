@@ -201,6 +201,44 @@ class TrafficCar {
   }
 }
 
+class Bird {
+  constructor(x, y, width, height, speed) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.speed = speed;
+  }
+
+  update() {
+    this.x += this.speed;
+
+    // Reset position when off-screen
+    if (this.speed > 0 && this.x > canvas.width + this.width) {
+      this.x = -this.width;
+    } else if (this.speed < 0 && this.x < -this.width) {
+      this.x = canvas.width + this.width;
+    }
+  }
+
+  draw() {
+    ctx.fillStyle = "orange"; // bird color
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.width / 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(this.x - this.width / 2, this.y - this.height / 4, this.width, this.height / 2); // wings
+  }
+
+  collides(drone) {
+    return (
+      drone.x < this.x + this.width &&
+      drone.x + 20 > this.x &&
+      drone.y < this.y + this.height &&
+      drone.y + 20 > this.y
+    );
+  }
+}
+
 // -------------------- OBJECTS --------------------
 
 const drone = new Drone();
@@ -208,15 +246,23 @@ const obstacles = [
   new Obstacle(400, 300, 30),
   new Obstacle(600, 200, 40)
 ];
+
 const chargingZone = new ChargingZone(750, 400, 60);
 const potholes = [
   new Pothole(300, 250, 25),
   new Pothole(500, 400, 30)
 ];
+
 const trafficCars = [
   new TrafficCar(0, 200, 60, 30, 3),
   new TrafficCar(800, 350, 70, 35, -4)
 ];
+
+const birds = [
+  new Bird(0, 150, 40, 20, 2),    // bird flying right
+  new Bird(800, 250, 50, 25, -3)  // bird flying left
+];
+
 
 // -------------------- DRAWING --------------------
 
@@ -307,6 +353,20 @@ function gameLoop() {
       car.update();
       car.draw();
       if (car.collides(drone)) {
+        gameState = "gameover";
+        collisionSound.play();
+        const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
+        if (drone.score > highScore) {
+          localStorage.setItem("highScore", drone.score);
+        }
+      }
+    });
+
+    // Birds
+    birds.forEach(bird => {
+      bird.update();
+      bird.draw();
+      if (bird.collides(drone)) {
         gameState = "gameover";
         collisionSound.play();
         const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
