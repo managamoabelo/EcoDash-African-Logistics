@@ -131,26 +131,6 @@ class ChargingZone {
   }
 }
 
-class Obstacle {
-  constructor(x, y, radius) {
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-  }
-  draw() {
-    ctx.fillStyle = "brown";
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  collides(drone) {
-    const dx = drone.x - this.x;
-    const dy = drone.y - this.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    return distance < this.radius + 20;
-  }
-}
-
 class Pothole {
   constructor(x, y, radius) {
     this.x = x;
@@ -242,10 +222,6 @@ class Bird {
 // -------------------- OBJECTS --------------------
 
 const drone = new Drone();
-const obstacles = [
-  new Obstacle(400, 300, 30),
-  new Obstacle(600, 200, 40)
-];
 
 const chargingZone = new ChargingZone(750, 400, 60);
 const potholes = [
@@ -322,18 +298,6 @@ function gameLoop() {
   } else if (gameState === "playing") {
     drone.update();
     drone.draw();
-
-    // Obstacles
-    obstacles.forEach(obs => {
-      obs.draw();
-      if (obs.collides(drone)) {
-        gameState = "gameover";
-        const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
-        if (drone.score > highScore) {
-          localStorage.setItem("highScore", drone.score);
-        }
-      }
-    });
 
     // Potholes
     potholes.forEach(hole => {
