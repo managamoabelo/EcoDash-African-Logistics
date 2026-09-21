@@ -131,26 +131,6 @@ class ChargingZone {
   }
 }
 
-class Pothole {
-  constructor(x, y, radius) {
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-  }
-  draw() {
-    ctx.fillStyle = "darkgrey";
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  collides(drone) {
-    const dx = drone.x - this.x;
-    const dy = drone.y - this.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    return distance < this.radius + 20;
-  }
-}
-
 class TrafficCar {
   constructor(x, y, width, height, speed) {
     this.x = x;
@@ -276,10 +256,6 @@ class ResourcePoint {
 const drone = new Drone();
 
 const chargingZone = new ChargingZone(750, 400, 60);
-const potholes = [
-  new Pothole(300, 250, 25),
-  new Pothole(500, 400, 30)
-];
 
 const trafficCars = [
   new TrafficCar(0, 200, 60, 30, 3),
@@ -379,19 +355,6 @@ function gameLoop() {
       resourcePoint.collected = true;
       drone.score += 50; // bonus for collecting resources
     }
-
-    // Potholes
-    potholes.forEach(hole => {
-      hole.draw();
-      if (hole.collides(drone)) {
-        gameState = "gameover";
-        collisionSound.play();
-        const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
-        if (drone.score > highScore) {
-          localStorage.setItem("highScore", drone.score);
-        }
-      }
-    });
 
     // Traffic cars
     trafficCars.forEach(car => {
