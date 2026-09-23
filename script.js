@@ -232,8 +232,8 @@ class House {
 
     if (!this.delivered) {
       ctx.fillText(
-        this.requiredResources.join(", "),
-        this.x,
+        `${this.requiredResources.length} Supplies Needed`,
+        this.x - 10,
         this.y - 10
       );
     } else {
