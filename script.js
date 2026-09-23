@@ -89,25 +89,6 @@ class Drone {
     ctx.beginPath();
     ctx.arc(this.x, this.y, 20, 0, Math.PI * 2);
     ctx.fill();
-
-    // HUD text
-    ctx.fillStyle = "black";
-    ctx.fillText(`Distance: ${this.distance.toFixed(0)}m`, 10, 50);
-    ctx.fillText(`Score: ${this.score}`, 10, 75);
-    ctx.fillText(`High Score: ${localStorage.getItem("highScore") || 0}`, 10, 100);
-
-    if (raining) ctx.fillText("Rain: Visibility Reduced", 10, 100);
-    if (windForce !== 0) ctx.fillText("Wind Drift Active", 10, 120);
-    if (loadShedding) ctx.fillText("Load-Shedding: Charging Disabled", 10, 140);
-
-    // Efficiency score
-    const usedBattery = 100 - this.battery;
-    const efficiency = usedBattery > 0 ? (this.distance / usedBattery).toFixed(2) : 0;
-    ctx.fillText(`Efficiency: ${efficiency} m/%`, 10, 125);
-
-    // Battery bar HUD
-    
-    ctx.fillText(`Battery:  ${this.battery.toFixed(0)}%`, 10, 25);
   }
 }
 
@@ -251,6 +232,29 @@ class ResourcePoint {
   }
 }
 
+// -------------------- HUD --------------------
+
+function updateHUD() {
+  document.getElementById("battery").textContent = `${drone.battery.toFixed(0)}%`;
+
+  document.getElementById("distance").textContent = `${drone.distance.toFixed(0)}m`;
+
+  document.getElementById("score").textContent = drone.score;
+
+  document.getElementById("highScore").textContent = localStorage.getItem("highScore") || 0;
+
+  const usedBattery = 100 - drone.battery;
+  const efficiency = usedBattery > 0 ? (drone.distance / usedBattery).toFixed(2) : 0;
+
+  document.getElementById("efficiency").textContent = efficiency;
+
+  document.getElementById("rainStatus").textContent = raining ? "Rain: Visibility Reduced" : "";
+
+  document.getElementById("windStatus").textContent = windForce !== 0 ? "Wind Drift Active" : "";
+
+  document.getElementById("loadStatus").textContent = loadShedding ? "Load-Shedding: Charging Disabled" : "";
+}
+
 // -------------------- OBJECTS --------------------
 
 const drone = new Drone();
@@ -343,6 +347,7 @@ function gameLoop() {
   } else if (gameState === "playing") {
     drone.update();
     drone.draw();
+    updateHUD();
 
     // Houses (background environment)
     houses.forEach(house => {
