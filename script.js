@@ -245,9 +245,23 @@ class House {
   }
 
   draw() {
+    ctx.fillStyle = "lightgreen";
+    ctx.fillRect(this.x - 10, this.y - 10, this.width + 20, this.height + 20);
+
     // House
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
+
+    // Left window
+    ctx.fillStyle = "white";
+    ctx.fillRect(this.x + 10, this.y + 15, 20, 20);
+
+    // Right window
+    ctx.fillRect(this.x + 70, this.y + 15, 20, 20);
+
+    // Door
+    ctx.fillStyle = "#654321";
+    ctx.fillRect(this.x + 40, this.y + 35, 20, 35);
 
     // Roof
     ctx.fillStyle = "maroon";
@@ -355,19 +369,17 @@ const birds = [
 ];
 
 const houses = [
-  new House(50, 170, 100, 70, "lightblue"),
-  new House(200, 170, 100, 70, "yellow"),
-  new House(350, 170, 100, 70, "pink"),
-  new House(500, 170, 100, 70, "lightgreen"),
-  new House(650, 170, 100, 70, "orange"),
-  new House(800, 170, 100, 70, "lightgrey"),
+  new House(50, 100, 100, 70, "lightblue"),
+  new House(200, 100, 100, 70, "yellow"),
+  new House(350, 100, 100, 70, "pink"),
+  new House(500, 100, 100, 70, "lightgreen"),
+  new House(650, 100, 100, 70, "orange"),
 
   new House(50, 650, 100, 70, "blue"),
   new House(200, 650, 100, 70, "purple"),
   new House(350, 650, 100, 70, "brown"),
   new House(500, 650, 100, 70, "green"),
-  new House(650, 650, 100, 70, "orange"),
-  new House(800, 650, 100, 70, "grey")
+  new House(650, 650, 100, 70, "grey")
 ];
 
 houses.forEach(house => {
@@ -414,12 +426,39 @@ function drawGameOverScreen() {
   ctx.fillText("Press ENTER to Restart", 270, 300);
 }
 
+function drawRoads() {
+  ctx.fillStyle = "#444";
+
+  // Top neighbourhood road
+  ctx.fillRect(0, 250, canvas.width, 70);
+
+  // Bottom neighbourhood road
+  ctx.fillRect(0, 530, canvas.width, 70);
+
+  ctx.fillStyle = "yellow";
+  for (let x = 0; x < canvas.width; x += 60) {
+    ctx.fillRect(x, 285, 30, 5);
+    ctx.fillRect(x, 565, 30, 5);
+  }
+}
+
+function drawTree(x, y) {
+  ctx.fillStyle = "brown";
+  ctx.fillRect(x, y, 10, 30);
+
+  ctx.fillStyle = "green";
+  ctx.beginPath();
+  ctx.arc(x + 5, y - 10, 20, 0, Math.PI * 2);
+  ctx.fill();
+}
+
 // -------------------- GAME LOOP --------------------
 
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   drawBackground();
+  drawRoads();
   chargingZone.draw();
 
   if (chargingZone.contains(drone) && !loadShedding) {
@@ -463,6 +502,17 @@ function gameLoop() {
         }
       }
     });
+
+    // Draw tress
+    drawTree(175, 170);
+    drawTree(325, 170);
+    drawTree(475, 170);
+    drawTree(625, 170);
+
+    drawTree(175, 720);
+    drawTree(325, 720);
+    drawTree(475, 720);
+    drawTree(625, 720);
 
     // Resource Point
     resourcePoint.draw();
