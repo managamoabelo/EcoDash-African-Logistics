@@ -400,7 +400,7 @@ function gameLoop() {
   } else if (gameState === "playing") {
     drone.update();
     drone.draw();
-    updateHUD(document.getElementById("cargo").textContent = drone.resources.join(", "));
+    updateHUD();
 
     // Houses (background environment)
     houses.forEach(house => {
