@@ -10,6 +10,13 @@ let loadShedding = false; // disables charging zones
 let timeOfDay = 0;
 let cycleCounter = 0;
 
+const keys = {
+  up: false,
+  down: false,
+  left: false,
+  right: false
+};
+
 // Load sounds
 const bgMusic = new Audio("assets/sounds/background.mp3");
 bgMusic.loop = true;
@@ -33,11 +40,28 @@ class Drone {
     this.maxSpeed = 10;
     this.friction = 0.08;
     this.resources = [];
+    this.invulnerable = 0;
   }
 
   update() {
     // Apply wind drift
     this.x += windForce;
+
+    if (keys.left) {
+      this.angle -= 0.05;
+    }
+
+    if (keys.right) {
+      this.angle += 0.05;
+    }
+
+    if (keys.up) {
+      this.acceleration = 0.1;
+    } else if (keys.down) {
+      this.acceleration = -0.1;
+    } else {
+      this.acceleration = 0;
+    }
 
     // Apply acceleration
     this.speed += this.acceleration;
@@ -61,6 +85,10 @@ class Drone {
     this.x += Math.cos(this.angle) * this.speed;
     this.y += Math.sin(this.angle) * this.speed;
     this.distance += Math.abs(this.speed);
+
+    if (this.invulnerable > 0) {
+      this.invulnerable--;
+    }
 
     // Battery drain
     if (this.speed !== 0) {
@@ -121,6 +149,7 @@ class TrafficCar {
     this.height = height;
     this.speed = speed;
   }
+
   update() {
     this.x += this.speed;
     if (this.speed > 0 && this.x > canvas.width + this.width) {
@@ -129,16 +158,20 @@ class TrafficCar {
       this.x = canvas.width + this.width;
     }
   }
+
   draw() {
     ctx.fillStyle = "red";
     ctx.fillRect(this.x, this.y, this.width, this.height);
   }
+
   collides(drone) {
+    const padding = 8;
+
     return (
-      drone.x < this.x + this.width &&
-      drone.x + 20 > this.x &&
-      drone.y < this.y + this.height &&
-      drone.y + 20 > this.y
+      drone.x + 20 > this.x + padding &&
+      drone.x - 20 < this.x + this.width - padding &&
+      drone.y + 20 > this.y + padding &&
+      drone.y - 20 < this.y + this.height - padding
     );
   }
 }
@@ -172,12 +205,11 @@ class Bird {
   }
 
   collides(drone) {
-    return (
-      drone.x < this.x + this.width &&
-      drone.x + 20 > this.x &&
-      drone.y < this.y + this.height &&
-      drone.y + 20 > this.y
-    );
+    const dx = drone.x - this.x;
+    const dy = drone.y - this.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    return distance < 30;
   }
 }
 
@@ -243,11 +275,13 @@ class House {
   }
 
   contains(drone) {
+    const droneRadius = 20;
+
     return (
-      drone.x > this.x &&
-      drone.x < this.x + this.width &&
-      drone.y > this.y &&
-      drone.y < this.y + this.height
+      drone.x + droneRadius > this.x &&
+      drone.x - droneRadius < this.x + this.width &&
+      drone.y + droneRadius > this.y &&
+      drone.y - droneRadius < this.y + this.height
     );
   }
 }
@@ -443,8 +477,8 @@ function gameLoop() {
     trafficCars.forEach(car => {
       car.update();
       car.draw();
-      if (car.collides(drone)) {
-        gameState = "gameover";
+      if (car.collides(drone) && drone.invulnerable === 0) {
+        drone.invulnerable = 60;
         collisionSound.play();
         const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
         if (drone.score > highScore) {
@@ -457,8 +491,8 @@ function gameLoop() {
     birds.forEach(bird => {
       bird.update();
       bird.draw();
-      if (bird.collides(drone)) {
-        gameState = "gameover";
+      if (bird.collides(drone) && drone.invulnerable === 0) {
+        drone.invulnerable = 60;
         collisionSound.play();
         const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
         if (drone.score > highScore) {
@@ -512,10 +546,10 @@ document.addEventListener("keydown", e => {
   if (gameState === "start" && e.key === "Enter") {
     gameState = "playing";
   } else if (gameState === "playing") {
-    if (e.key === "ArrowUp") drone.acceleration = 0.1;
-    if (e.key === "ArrowDown") drone.acceleration = -0.1;
-    if (e.key === "ArrowLeft") drone.angle -= 0.1;
-    if (e.key === "ArrowRight") drone.angle += 0.1;
+    if (e.key === "ArrowUp") keys.up = true;
+    if (e.key === "ArrowDown") keys.down = true;
+    if (e.key === "ArrowLeft") keys.left = true;
+    if (e.key === "ArrowRight") keys.right = true;
     if (e.key.toLowerCase() === "p") gameState = "paused";
 
     // Toggle environmental effects
@@ -531,6 +565,9 @@ document.addEventListener("keydown", e => {
   }
 });
 
-document.addEventListener("keyup", () => {
-  if (gameState === "playing") drone.acceleration = 0;
+document.addEventListener("keyup", e => {
+  if (e.key === "ArrowUp") keys.up = false;
+  if (e.key === "ArrowDown") keys.down = false;
+  if (e.key === "ArrowLeft") keys.left = false;
+  if (e.key === "ArrowRight") keys.right = false;
 });
