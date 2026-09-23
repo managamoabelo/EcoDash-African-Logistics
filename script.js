@@ -32,6 +32,7 @@ class Drone {
     this.acceleration = 0;
     this.maxSpeed = 10;
     this.friction = 0.08;
+    this.resources = [];
   }
 
   update() {
@@ -187,14 +188,36 @@ class House {
     this.width = width;
     this.height = height;
     this.color = color;
+    this.requiredResources = [];
+    this.delivered = false;
+  }
+
+  assignResources() {
+    const resourceTypes = [
+      "Medical",
+      "Food",
+      "Education",
+      "Emergency"
+    ];
+
+    const amountNeeded = Math.floor(Math.random() * 3) + 1;
+
+    while (this.requiredResources.length < amountNeeded) {
+      const randomResource =
+        resourceTypes[Math.floor(Math.random() * resourceTypes.length)];
+
+      if (!this.requiredResources.includes(randomResource)) {
+        this.requiredResources.push(randomResource);
+      }
+    }
   }
 
   draw() {
-    // Base rectangle
+    // House
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
 
-    // Roof (triangle)
+    // Roof
     ctx.fillStyle = "maroon";
     ctx.beginPath();
     ctx.moveTo(this.x, this.y);
@@ -202,6 +225,30 @@ class House {
     ctx.lineTo(this.x + this.width, this.y);
     ctx.closePath();
     ctx.fill();
+
+    // Resource requirements
+    ctx.fillStyle = "black";
+    ctx.font = "10px Arial";
+
+    if (!this.delivered) {
+      ctx.fillText(
+        this.requiredResources.join(", "),
+        this.x,
+        this.y - 10
+      );
+    } else {
+      ctx.fillStyle = "green";
+      ctx.fillText("Delivered", this.x + 15, this.y - 10);
+    }
+  }
+
+  contains(drone) {
+    return (
+      drone.x > this.x &&
+      drone.x < this.x + this.width &&
+      drone.y > this.y &&
+      drone.y < this.y + this.height
+    );
   }
 }
 
@@ -253,6 +300,8 @@ function updateHUD() {
   document.getElementById("windStatus").textContent = windForce !== 0 ? "Wind Drift Active" : "";
 
   document.getElementById("loadStatus").textContent = loadShedding ? "Load-Shedding: Charging Disabled" : "";
+
+  document.getElementById("cargo").textContent = drone.resources.length > 0 ? drone.resources.join(", ") : "None";
 }
 
 // -------------------- OBJECTS --------------------
@@ -286,6 +335,10 @@ const houses = [
   new House(650, 650, 100, 70, "orange"),
   new House(800, 650, 100, 70, "grey")
 ];
+
+houses.forEach(house => {
+  house.assignResources();
+});
 
 const resourcePoint = new ResourcePoint(400, 250, 40);
 
@@ -347,16 +400,35 @@ function gameLoop() {
   } else if (gameState === "playing") {
     drone.update();
     drone.draw();
-    updateHUD();
+    updateHUD(document.getElementById("cargo").textContent = drone.resources.join(", "));
 
     // Houses (background environment)
     houses.forEach(house => {
       house.draw();
+
+      if (
+        resourcePoint.collected &&
+        !house.delivered &&
+        house.contains(drone)
+      ) {
+        const canDeliver = house.requiredResources.every(
+          resource => drone.resources.includes(resource)
+        );
+
+        if (canDeliver) {
+          house.delivered = true;
+          drone.score += 100;
+          drone.resources = [];
+          resourcePoint.collected = false;
+        }
+      }
     });
 
     // Resource Point
     resourcePoint.draw();
     if (resourcePoint.contains(drone) && !resourcePoint.collected) {
+
+      drone.resources = ["Medical", "Food", "Education", "Emergency"];
       resourcePoint.collected = true;
       drone.score += 50; // bonus for collecting resources
     }
@@ -418,6 +490,14 @@ function restartGame() {
   drone.distance = 0;
   drone.score = 0;
   gameState = "playing";
+  drone.resources = [];
+  resourcePoint.collected = false;
+
+  houses.forEach(house => {
+    house.requiredResources = [];
+    house.delivered = false;
+    house.assignResources();
+  });
 }
 
 // -------------------- CONTROLS --------------------
