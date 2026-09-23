@@ -420,6 +420,12 @@ function gameLoop() {
           drone.score += 100;
           drone.resources = [];
           resourcePoint.collected = false;
+
+          setTimeout(() => {
+            house.requiredResources = [];
+            house.delivered = false;
+            house.assignResources();
+          }, 10000);
         }
       }
     });
