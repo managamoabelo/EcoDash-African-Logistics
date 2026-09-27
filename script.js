@@ -29,8 +29,8 @@ const moveSound = new Audio("assets/sounds/move.wav");
 
 class Drone {
   constructor() {
-    this.x = 100;
-    this.y = 100;
+    this.x = 850;
+    this.y = 430;
     this.angle = 0;
     this.speed = 0;
     this.battery = 100;
@@ -695,8 +695,8 @@ gameLoop();
 // -------------------- RESTART --------------------
 
 function restartGame() {
-  drone.x = 100;
-  drone.y = 100;
+  drone.x = 850;
+  drone.y = 430;
   drone.angle = 0;
   drone.speed = 0;
   drone.battery = 100;
