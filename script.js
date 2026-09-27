@@ -113,11 +113,44 @@ class Drone {
   }
 
   draw() {
-    // Drone
-    ctx.fillStyle = "blue";
+    ctx.save();
+
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+
+    // Cargo box
+    ctx.fillStyle = "#8B4513";
+    ctx.fillRect(-12, -12, 24, 24);
+
+    // Front arrow
+    ctx.fillStyle = "#0066ff";
     ctx.beginPath();
-    ctx.arc(this.x, this.y, 20, 0, Math.PI * 2);
+    ctx.moveTo(25, 0);
+    ctx.lineTo(5, -10);
+    ctx.lineTo(5, 10);
+    ctx.closePath();
     ctx.fill();
+
+    // Rotors
+    ctx.fillStyle = "black";
+
+    ctx.beginPath();
+    ctx.arc(-20, -20, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(20, -20, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(-20, 20, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(20, 20, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
   }
 }
 
