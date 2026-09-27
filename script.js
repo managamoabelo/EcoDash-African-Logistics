@@ -241,25 +241,66 @@ class Bird {
     this.width = width;
     this.height = height;
     this.speed = speed;
+    this.color = ["brown", "black", "grey"][
+      Math.floor(Math.random() * 3)
+    ];
   }
 
   update() {
     this.x += this.speed;
 
-    // Reset position when off-screen
+    this.y += Math.sin(Date.now() * 0.002 + this.x * 0.01) * 0.5;
+
     if (this.speed > 0 && this.x > canvas.width + this.width) {
+
       this.x = -this.width;
+      this.y = 80 + Math.random() * 250;
+
     } else if (this.speed < 0 && this.x < -this.width) {
+
       this.x = canvas.width + this.width;
+      this.y = 80 + Math.random() * 250;
+
     }
   }
 
   draw() {
-    ctx.fillStyle = "orange"; // bird color
+    ctx.save();
+
+    ctx.translate(this.x, this.y);
+
+    // body
+    ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.width / 2, 0, Math.PI * 2);
+    ctx.ellipse(0, 0, 12, 8, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillRect(this.x - this.width / 2, this.y - this.height / 4, this.width, this.height / 2); // wings
+
+    // wings
+    const flap = Math.sin(Date.now() * 0.02) * 8;
+
+    ctx.strokeStyle = "#5c4033";
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+    ctx.moveTo(-5, 0);
+    ctx.lineTo(-15, flap);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(5, 0);
+    ctx.lineTo(15, flap);
+    ctx.stroke();
+
+    // beak
+    ctx.fillStyle = "orange";
+    ctx.beginPath();
+    ctx.moveTo(12, 0);
+    ctx.lineTo(18, -2);
+    ctx.lineTo(18, 2);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
   }
 
   collides(drone) {
@@ -267,7 +308,7 @@ class Bird {
     const dy = drone.y - this.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    return distance < 30;
+    return distance < 20;
   }
 }
 
@@ -432,10 +473,13 @@ const trafficCars = [
   new TrafficCar(1400, 545, 70, 35, -4, "orange")
 ];
 
-const birds = [
-  new Bird(0, 150, 40, 20, 2),    // bird flying right
-  new Bird(800, 250, 50, 25, -3)  // bird flying left
-];
+const birds = [];
+
+for (let i = 0; i < 10; i++) {
+  birds.push(
+    new Bird(Math.random() * canvas.width, 80 + Math.random() * 250,40, 20, Math.random() > 0.5 ? 2 + Math.random() * 2 : -(2 + Math.random() * 2))
+  );
+}
 
 const houses = [
   new House(50, 100, 100, 70, "lightblue"),
