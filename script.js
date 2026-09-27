@@ -148,12 +148,13 @@ class ChargingZone {
 }
 
 class TrafficCar {
-  constructor(x, y, width, height, speed) {
+  constructor(x, y, width, height, speed, color) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.speed = speed;
+    this.color = color;
   }
 
   update() {
@@ -166,9 +167,27 @@ class TrafficCar {
   }
 
   draw() {
-    ctx.fillStyle = "red";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-  }
+
+  // Car body
+  ctx.fillStyle = this.color;
+  ctx.fillRect(this.x, this.y, this.width, this.height);
+
+  // Windows
+  ctx.fillStyle = "lightblue";
+  ctx.fillRect(this.x + 10, this.y + 5, 15, 10);
+  ctx.fillRect(this.x + 35, this.y + 5, 15, 10);
+
+  // Wheels
+  ctx.fillStyle = "black";
+
+  ctx.beginPath();
+  ctx.arc(this.x + 10, this.y + this.height, 5, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(this.x + this.width - 10, this.y + this.height, 5, 0, Math.PI * 2);
+  ctx.fill();
+}
 
   collides(drone) {
     const padding = 8;
@@ -369,8 +388,15 @@ const drone = new Drone();
 const chargingZone = new ChargingZone(1150, 430, 45);
 
 const trafficCars = [
-  new TrafficCar(0, 200, 60, 30, 3),
-  new TrafficCar(800, 350, 70, 35, -4)
+  // Top road
+  new TrafficCar(0, 265, 60, 30, 3, "red"),
+  new TrafficCar(500, 265, 60, 30, 3, "blue"),
+  new TrafficCar(1000, 265, 60, 30, 3, "yellow"),
+
+  // Bottom road
+  new TrafficCar(300, 545, 70, 35, -4, "white"),
+  new TrafficCar(900, 545, 70, 35, -4, "green"),
+  new TrafficCar(1400, 545, 70, 35, -4, "orange")
 ];
 
 const birds = [
