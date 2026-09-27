@@ -593,7 +593,6 @@ function gameLoop() {
     drawStartScreen();
   } else if (gameState === "playing") {
     drone.update();
-    drone.draw();
     updateHUD();
 
     // Houses (background environment)
@@ -673,6 +672,8 @@ function gameLoop() {
         }
       }
     });
+    
+    drone.draw();
 
     // Rain effect
     if (raining) {
