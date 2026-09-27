@@ -127,12 +127,18 @@ class ChargingZone {
     this.y = y;
     this.radius = radius;
   }
+
   draw() {
     ctx.fillStyle = "green";
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
+
+    ctx.fillStyle = "white";
+    ctx.font = "18px Calibri";
+    ctx.fillText("Charging Zone", this.x - this.radius, this.y - this.radius - 5);
   }
+
   contains(drone) {
     const dx = drone.x - this.x;
     const dy = drone.y - this.y;
@@ -279,8 +285,8 @@ class House {
     if (!this.delivered) {
       ctx.fillText(
         `${this.requiredResources.length} Supplies Needed`,
-        this.x - 10,
-        this.y - 10
+        this.x - 5,
+        this.y - 55
       );
     } else {
       ctx.fillStyle = "green";
@@ -309,14 +315,18 @@ class ResourcePoint {
   }
 
   draw() {
-    ctx.fillStyle = this.collected ? "grey" : "purple"; // grey if already collected
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fill();
+    // Building
+    ctx.fillStyle = this.collected ? "grey" : "purple";
+    ctx.fillRect(this.x - 40, this.y - 30, 80, 60);
 
+    // Door
+    ctx.fillStyle = "black";
+    ctx.fillRect(this.x - 10, this.y, 20, 30);
+
+    // Text
     ctx.fillStyle = "white";
-    ctx.font = "14px Calibri";
-    ctx.fillText("Resources", this.x - this.radius, this.y - this.radius - 5);
+    ctx.font = "18px Calibri";
+    ctx.fillText("Resource Warehouse", this.x - this.radius, this.y - this.radius - 5);
   }
 
   contains(drone) {
@@ -356,7 +366,7 @@ function updateHUD() {
 
 const drone = new Drone();
 
-const chargingZone = new ChargingZone(750, 400, 60);
+const chargingZone = new ChargingZone(1150, 430, 45);
 
 const trafficCars = [
   new TrafficCar(0, 200, 60, 30, 3),
@@ -370,23 +380,23 @@ const birds = [
 
 const houses = [
   new House(50, 100, 100, 70, "lightblue"),
-  new House(200, 100, 100, 70, "yellow"),
-  new House(350, 100, 100, 70, "pink"),
-  new House(500, 100, 100, 70, "lightgreen"),
-  new House(650, 100, 100, 70, "orange"),
+  new House(230, 100, 100, 70, "yellow"),
+  new House(410, 100, 100, 70, "pink"),
+  new House(590, 100, 100, 70, "lightgreen"),
+  new House(770, 100, 100, 70, "orange"),
 
   new House(50, 650, 100, 70, "blue"),
-  new House(200, 650, 100, 70, "purple"),
-  new House(350, 650, 100, 70, "brown"),
-  new House(500, 650, 100, 70, "green"),
-  new House(650, 650, 100, 70, "grey")
+  new House(230, 650, 100, 70, "purple"),
+  new House(410, 650, 100, 70, "brown"),
+  new House(590, 650, 100, 70, "green"),
+  new House(770, 650, 100, 70, "grey")
 ];
 
 houses.forEach(house => {
   house.assignResources();
 });
 
-const resourcePoint = new ResourcePoint(400, 250, 40);
+const resourcePoint = new ResourcePoint(950, 430, 40);
 
 // -------------------- DRAWING --------------------
 
@@ -440,6 +450,14 @@ function drawRoads() {
     ctx.fillRect(x, 285, 30, 5);
     ctx.fillRect(x, 565, 30, 5);
   }
+
+  ctx.fillStyle = "#bbbbbb";
+
+  ctx.fillRect(0, 240, canvas.width, 10);
+  ctx.fillRect(0, 320, canvas.width, 10);
+
+  ctx.fillRect(0, 520, canvas.width, 10);
+  ctx.fillRect(0, 600, canvas.width, 10);
 }
 
 function drawTree(x, y) {
@@ -530,6 +548,7 @@ function gameLoop() {
       if (car.collides(drone) && drone.invulnerable === 0) {
         drone.invulnerable = 60;
         collisionSound.play();
+        gameState = "gameover";
         const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
         if (drone.score > highScore) {
           localStorage.setItem("highScore", drone.score);
@@ -544,6 +563,7 @@ function gameLoop() {
       if (bird.collides(drone) && drone.invulnerable === 0) {
         drone.invulnerable = 60;
         collisionSound.play();
+        gameState = "gameover";
         const highScore = parseInt(localStorage.getItem("highScore") || "0", 10);
         if (drone.score > highScore) {
           localStorage.setItem("highScore", drone.score);
