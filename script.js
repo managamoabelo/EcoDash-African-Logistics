@@ -203,26 +203,26 @@ class TrafficCar {
 
   draw() {
 
-  // Car body
-  ctx.fillStyle = this.color;
-  ctx.fillRect(this.x, this.y, this.width, this.height);
+    // Car body
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
 
-  // Windows
-  ctx.fillStyle = "lightblue";
-  ctx.fillRect(this.x + 10, this.y + 5, 15, 10);
-  ctx.fillRect(this.x + 35, this.y + 5, 15, 10);
+    // Windows
+    ctx.fillStyle = "lightblue";
+    ctx.fillRect(this.x + 10, this.y + 5, 15, 10);
+    ctx.fillRect(this.x + 35, this.y + 5, 15, 10);
 
-  // Wheels
-  ctx.fillStyle = "black";
+    // Wheels
+    ctx.fillStyle = "black";
 
-  ctx.beginPath();
-  ctx.arc(this.x + 10, this.y + this.height, 5, 0, Math.PI * 2);
-  ctx.fill();
+    ctx.beginPath();
+    ctx.arc(this.x + 10, this.y + this.height, 5, 0, Math.PI * 2);
+    ctx.fill();
 
-  ctx.beginPath();
-  ctx.arc(this.x + this.width - 10, this.y + this.height, 5, 0, Math.PI * 2);
-  ctx.fill();
-}
+    ctx.beginPath();
+    ctx.arc(this.x + this.width - 10, this.y + this.height, 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
   collides(drone) {
     const padding = 8;
@@ -479,7 +479,7 @@ const birds = [];
 
 for (let i = 0; i < 10; i++) {
   birds.push(
-    new Bird(Math.random() * canvas.width, 80 + Math.random() * 250,40, 20, Math.random() > 0.5 ? 2 + Math.random() * 2 : -(2 + Math.random() * 2))
+    new Bird(Math.random() * canvas.width, 80 + Math.random() * 250, 40, 20, Math.random() > 0.5 ? 2 + Math.random() * 2 : -(2 + Math.random() * 2))
   );
 }
 
