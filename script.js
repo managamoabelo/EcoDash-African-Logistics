@@ -24,8 +24,8 @@ const bgMusic = new Audio("assets/sounds/background.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0.5;
 
-const collisionSound = new Audio("assets/sounds/collision.wav");
-const moveSound = new Audio("assets/sounds/move.wav");
+const collisionSound = new Audio("assets/sounds/collision.mp3");
+const moveSound = new Audio("assets/sounds/move.mp3");
 
 // -------------------- CLASSES --------------------
 
