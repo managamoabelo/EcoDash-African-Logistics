@@ -759,6 +759,7 @@ function restartGame() {
 document.addEventListener("keydown", e => {
   if (gameState === "start" && e.key === "Enter") {
     gameState = "playing";
+    bgMusic.play();
   } else if (gameState === "playing") {
     if (e.key === "ArrowUp") keys.up = true;
     if (e.key === "ArrowDown") keys.down = true;
