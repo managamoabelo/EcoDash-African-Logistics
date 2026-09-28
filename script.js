@@ -9,6 +9,8 @@ let raining = false;     // rain effect
 let loadShedding = false; // disables charging zones
 let timeOfDay = 0;
 let cycleCounter = 0;
+let environmentTimer = 0;
+let nextEnvironmentChange = 600 + Math.random() * 600;
 
 const keys = {
   up: false,
@@ -573,6 +575,43 @@ function drawTree(x, y) {
   ctx.fill();
 }
 
+function updateEnvironment() {
+  environmentTimer++;
+
+  if (environmentTimer >= nextEnvironmentChange) {
+
+    environmentTimer = 0;
+    nextEnvironmentChange = 600 + Math.random() * 600;
+
+    // Reset current effects
+    raining = false;
+    windForce = 0;
+    loadShedding = false;
+
+    // Random event
+    const randomEvent = Math.floor(Math.random() * 4);
+
+    switch (randomEvent) {
+
+      case 0:
+        raining = true;
+        break;
+
+      case 1:
+        windForce = Math.random() > 0.5 ? 0.5 : -0.5;
+        break;
+
+      case 2:
+        loadShedding = true;
+        break;
+
+      case 3:
+        // Normal conditions
+        break;
+    }
+  }
+}
+
 // -------------------- GAME LOOP --------------------
 
 function gameLoop() {
@@ -592,6 +631,7 @@ function gameLoop() {
   if (gameState === "start") {
     drawStartScreen();
   } else if (gameState === "playing") {
+    updateEnvironment();
     drone.update();
     updateHUD();
 
@@ -672,7 +712,7 @@ function gameLoop() {
         }
       }
     });
-    
+
     drone.draw();
 
     // Rain effect
@@ -726,10 +766,6 @@ document.addEventListener("keydown", e => {
     if (e.key === "ArrowRight") keys.right = true;
     if (e.key.toLowerCase() === "p") gameState = "paused";
 
-    // Toggle environmental effects
-    if (e.key.toLowerCase() === "r") raining = !raining;
-    if (e.key.toLowerCase() === "w") windForce = windForce === 0 ? 0.5 : 0;
-    if (e.key.toLowerCase() === "l") loadShedding = !loadShedding;
   } else if (gameState === "paused" && e.key.toLowerCase() === "p") {
     gameState = "playing";
   } else if (gameState === "paused" && e.key === "r") {
