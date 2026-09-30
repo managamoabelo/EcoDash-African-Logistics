@@ -406,12 +406,13 @@ class ResourcePoint {
     this.x = x;
     this.y = y;
     this.radius = radius;
-    this.collected = false; // track if resources have been picked up
+    // this.collected = false; // track if resources have been picked up
   }
 
   draw() {
     // Building
-    ctx.fillStyle = this.collected ? "grey" : "purple";
+    // ctx.fillStyle = this.collected ? "grey" : "purple";
+    ctx.fillStyle = "purple";
     ctx.fillRect(this.x - 40, this.y - 30, 80, 60);
 
     // Door
